@@ -1,8 +1,8 @@
-# Bonjour Jérôme ! Comment puis-je t'aider aujourd'hui dans la gestion de tes parcelles agricoles ? 😊
+Bonjour Jérôme ! Comment puis-je t'aider aujourd'hui dans la gestion de tes parcelles agricoles ? 😊
 
 ## tu peux croiser les données de la fertilisation la plus récente avec l'analyse de sol la plus récente pour me fournir une synthèse simple et compacte ?
 
-# Voici une synthèse compacte croisant la fertilisation la plus récente (du 10 juillet 2025) avec l'analyse de sol la plus récente (du 5 octobre 2025) :
+Voici une synthèse compacte croisant la fertilisation la plus récente (du 10 juillet 2025) avec l'analyse de sol la plus récente (du 5 octobre 2025) :
 
 Contexte du sol (analyse du 05/10/2025)
 Texture : Limono-sableuse
@@ -90,3 +90,4 @@ Recommander des ajustements (ex. irrigation, fertilisation foliaire).
 Prédire l'évolution du stade phénologique ou des besoins en eau.
 
 Je te tiendrai informé dès que le résultat du bilan sera disponible. En attendant, veux-tu que je vérifie un autre aspect (ex. historique des fertilisations, tendances météo) ? 😊
+
