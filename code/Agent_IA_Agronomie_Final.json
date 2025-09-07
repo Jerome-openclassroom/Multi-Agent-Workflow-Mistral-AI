@@ -1,0 +1,757 @@
+{
+  "name": "Agent_IA_Agronomie_Final",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6a76c2d2-698a-4fc8-801d-36d959d55505",
+              "name": "body",
+              "value": "={{ $json.body }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        128,
+        -640
+      ],
+      "id": "a298f712-d1f0-4957-b37e-3ed72c22c3d0",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = items[0].json.body;\n\nlet blocTexte = '';\nfor (const [key, value] of Object.entries(data)) {\n  blocTexte += `${key}:\\n${value}\\n\\n`;\n}\n\nblocTexte = blocTexte.trim();\n\nreturn [\n  {\n    json: {\n      texte: blocTexte\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        288,
+        -640
+      ],
+      "id": "7c274e59-74af-4927-9e0d-dc51647802ef",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Cet outil DOIT TOUJOURS être utilisé pour récupérer la météo. \nIl appelle WeatherAPI et renvoie un JSON avec les champs :\n- current.temp_c (température en °C)\n- current.wind_kph (vent en km/h).\nNe jamais dire que tu ne peux pas l’appeler : tu peux toujours l’appeler sans input utilisateur.\n\n",
+        "url": "http://api.weatherapi.com/v1/current.json?key=98adae444b4947a3a4e91950250905&q=marseille&aqi=no",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        528,
+        -416
+      ],
+      "id": "78b65f03-a885-4339-ba8b-73d182529c8c",
+      "name": "HTTP_Request_Meteo"
+    },
+    {
+      "parameters": {
+        "sendTo": "jerome.frasson.vsi@gmail.com",
+        "subject": "Conseil en irrigation ",
+        "emailType": "text",
+        "message": "={{ $json.cleanedText }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        880,
+        -640
+      ],
+      "id": "7d711938-b14a-4085-a80b-8f19fccb511e",
+      "name": "Send a message",
+      "webhookId": "38f0ed13-9211-483a-a5b2-8a99bbf2cf3c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "1p5L8t0Ti7Odu8ke",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "23456"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        176,
+        -416
+      ],
+      "id": "5a226461-e9e5-4c48-b86e-757eb9b40732",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Récupère l'ETP pour chaque heure de la journée en cours, sous forme de json.",
+        "url": "https://api.open-meteo.com/v1/forecast?latitude=43.297&longitude=5.3811&hourly=evapotranspiration&forecast_days=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        336,
+        -416
+      ],
+      "id": "4d5a54ef-b2ed-4573-a148-52716f0a6fc0",
+      "name": "HTTP_Request_ETP"
+    },
+    {
+      "parameters": {
+        "jsCode": "// \nconst cleanedText = $input.first().json.output\n  .replace(/###/g, '')   // Supprime les ###\n  .replace(/\\*\\*/g, '')  // Supprime les **\n\n// Retourne le texte nettoyé\nreturn {\n  cleanedText,\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        -640
+      ],
+      "id": "d6b61ff5-f655-4254-b3b2-9d427fe66013",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://discord.com/api/webhooks/1370382062359674921/-TSE6oDOgPZBStvDkjoCElAoZ5IMZU-ym74hEnf4ggeSWVaiC2j0qnGXvS-m0UXG62s1",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"content\": \"💧 Nouveau message du système Irrigation !\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        688,
+        -416
+      ],
+      "id": "3384c18a-175a-46b3-b4fc-6780f4f7a1ce",
+      "name": "HTTP Request Discord"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "f73d1de4-2f6c-4461-a459-1ee5054cefb6",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -32,
+        -640
+      ],
+      "id": "31ac832b-e98f-4c3d-9caf-2de8a548ae10",
+      "name": "Webhook Station Mesures",
+      "webhookId": "f73d1de4-2f6c-4461-a459-1ee5054cefb6"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://discord.com/api/webhooks/1370382062359674921/-TSE6oDOgPZBStvDkjoCElAoZ5IMZU-ym74hEnf4ggeSWVaiC2j0qnGXvS-m0UXG62s1",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"content\": \"🔥🔥 Attention : {{ $('Edit Fields').item.json.body.dendrometre }} ! Tension {{ $('Edit Fields').item.json.body.tension_centibar }} cbar ! 🔥🔥\"\n\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        864,
+        -416
+      ],
+      "id": "3b01fb91-4dfb-455e-95c4-b460136b5997",
+      "name": "HTTP_Request_Stress"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Edit Fields').item.json.body.session_id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1232,
+        -416
+      ],
+      "id": "1168fd1f-730f-4269-8ec0-27d334208ee2",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Inscrire le résumé du texte comme description dans le calendrier, à la date spécifiée à l'intérieur du message.\n",
+        "calendar": {
+          "__rl": true,
+          "value": "jerome.frasson84@gmail.com",
+          "mode": "list",
+          "cachedResultName": "jerome.frasson84@gmail.com"
+        },
+        "start": "={{ $('Webhook Station Mesures').item.json.body.date_releve }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "useDefaultReminders": false,
+        "additionalFields": {
+          "allday": "yes",
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1392,
+        -416
+      ],
+      "id": "8d717939-f754-4c2d-9903-d1d5a2d17868",
+      "name": "calendrier",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "pX0UzUcuWwr4s2wK",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1168,
+        -656
+      ],
+      "id": "589540fc-874f-4a09-9edc-45449a6e9aec",
+      "name": "When chat message received",
+      "webhookId": "61d6908f-652d-4505-b274-b384c543be77"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -1136,
+        -432
+      ],
+      "id": "d435c773-07fa-4c05-a6f1-26b8a3508362",
+      "name": "Simple Memory2"
+    },
+    {
+      "parameters": {
+        "outputFieldName": "date_releve",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTimeTool",
+      "typeVersion": 2,
+      "position": [
+        -496,
+        -432
+      ],
+      "id": "c96b0ca2-f76d-4d12-8faf-dfaab966e8f0",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://jeromex1.app.n8n.cloud/webhook-test/f73d1de4-2f6c-4461-a459-1ee5054cefb6",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('JSON', ``, 'json') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -320,
+        -432
+      ],
+      "id": "93afc265-a701-4745-8f4b-8b27349871d4",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1AyhzXiEXNk4Y4wRIJITzflzhChbJYWXF9Vj99J5GV1o",
+          "mode": "list",
+          "cachedResultName": "analyses_sol",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AyhzXiEXNk4Y4wRIJITzflzhChbJYWXF9Vj99J5GV1o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feuille 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AyhzXiEXNk4Y4wRIJITzflzhChbJYWXF9Vj99J5GV1o/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -992,
+        -432
+      ],
+      "id": "820b8aba-a223-4f56-ad37-8781e2b5f6c0",
+      "name": "analyses_sol",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "31LaukvmbfzpoFVr",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1YBR0gsUCdfHErU1BrOh90_EQ-mAUw7VB5pBZhSrDNmg",
+          "mode": "list",
+          "cachedResultName": "configuration_parcelle",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YBR0gsUCdfHErU1BrOh90_EQ-mAUw7VB5pBZhSrDNmg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feuille 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YBR0gsUCdfHErU1BrOh90_EQ-mAUw7VB5pBZhSrDNmg/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -640,
+        -432
+      ],
+      "id": "a85edd48-3443-47ca-a435-514b479e5ad3",
+      "name": "configuration_parcelle",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "31LaukvmbfzpoFVr",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "mistral-large-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        -1296,
+        -432
+      ],
+      "id": "1857f48a-5452-4b06-936b-b652658bbd1e",
+      "name": "Mistral Large",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "a79SHEq8GQASp16V",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Tu es un agent conversationnel spécialisé en agronomie, conçu pour assister Jérôme dans la gestion de ses parcelles agricoles. \n\nTu es contraint par une politique stricte de non-hallucination. Tu ne dois jamais générer de contenu basé sur des suppositions ou des extrapolations non fondées. Toute réponse doit être dérivée exclusivement des données accessibles via les outils connectés (Google Sheets, Date & Time). \n\nSi une donnée est manquante ou ambiguë, tu dois demander une clarification. Tu ne dois jamais inventer de valeurs dont tu ne disposes pas.\n\nVoici tes capacités :\n\n1. **Expertise agronomique** : tu peux répondre à des questions générales sur les sols, les cultures, les stades phénologiques, les stress hydriques, les pratiques culturales, les fertilisants, etc.\n\n2. **Consultation de données** :\n   - Tu peux lire et analyser les données du Google Sheet nommé `analyses_sol`, qui contient des informations sur les propriétés physico-chimiques des sols.\n   - Tu peux lire et analyser les données du Google Sheet nommé `configuration_parcelle`, qui décrit les caractéristiques des parcelles agricoles (surface, culture, localisation, etc.).\n- Tu peux lire et analyser les données du Google Sheet nommé `fertilisation_N`, qui contient l’historique des apports azotés (date, dose, type, mode, commentaire).\n\n\n3. **Date et heure** :\n   - Tu peux utiliser l’outil `Date & Time` pour fournir la date et l’heure actuelles ou les formater selon les besoins.\n\n4. **Requête HTTP** :\n   - Tu peux déclencher une requête HTTP POST lorsque Jérôme te le demande, en envoyant des données agronomiques structurées (ex. tension, texture, stade phénologique, etc.).\n\nLe nœud \"HTTP Request\" est utilisé pour expédier un objet JSON vers un webhook externe, dans le cadre d’un déclenchement inter-workflow (\"déclencher le bilan\")\n\nLe champ `session_id` est **fixe** et doit toujours être défini comme suit :\n  \"session_id\": \"user_jerome_001\"\n\nTous les autres champs du JSON sont **dynamiques** et doivent être extraits des outils internes suivants :\n- `analyses_sol` : fournit les données sur la structure du sol et la texture.\n- `configuration_parcelle` : fournit la tension en centibar, la profondeur du capteur, le dendromètre, l’enracinement et le stade phénologique.\n- `Date & Time` : fournit la date du relevé au format ISO 8601 avec fuseau horaire.\n\nExemple de JSON généré :\n{\n  \"session_id\": \"user_jerome_001\",\n  \"tension_centibar\": 45,\n  \"structure_sol\": \"grumeleuse\",\n  \"texture_sol\": \"limono-argileuse\",\n  \"stade_phenologique\": \"montaison\",\n  \"profondeur_capteur_cm\": 40,\n  \"enracinement\": 50,\n  \"date_releve\": \"2025-09-05T22:00:00+02:00\",\n  \"dendrometre\": \"stress_hydrique\"\n}\n\n\n**Règles de comportement** :\n- Sois clair, précis et pédagogique dans tes réponses.\n- Si une question nécessite l’utilisation d’un outil, déclenche-le sans attendre.\n- Si une donnée est absente ou ambiguë, demande à Jérôme de la préciser.\n- Tu peux t’appuyer sur les données des Google Sheets pour enrichir tes réponses ou faire des recommandations.\n\nTu es là pour aider Jérôme à prendre des décisions agronomiques éclairées, optimiser ses interventions, et suivre l’évolution de ses cultures.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -976,
+        -656
+      ],
+      "id": "13497f16-52bb-4c6f-9c38-a415eb9f9243",
+      "name": "Agent Mistral 1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.texte }}",
+        "options": {
+          "systemMessage": "Tu es un assistant spécialisé en irrigation agricole.  \n\nCommence toujours ta réponse par \"Bonjour\" (retour à la ligne).\nTermine toujours par une brève formule de courtoisie.\n\nTa mission est de fournir des réponses précises, fiables et pédagogiques concernant la gestion de l’eau, les besoins hydriques des cultures, et l’interprétation de mesures agronomiques.  \nTu disposes d’un savoir technique basé sur des données structurées (ex. tension du sol en cbar, ETP, pluviométrie, stade phénologique, enracinement, date du jour dendrometre etc.).  \n\n\nRègles :\n\n- Commences ta réponse en disant \"Bonjour\" (Puis retour à la ligne)\n- Réponds toujours en français clair, concis et structuré.  \n- Explique ton raisonnement lorsque c’est utile, mais évite le jargon inutile.  \n- Donne des conseils pratiques adaptés à l’agriculture (ex. « irrigation immédiate conseillée : 12 mm par goutte à goutte »).  \n- Si une donnée est incohérente ou manquante, précise-le au lieu d’inventer une réponse.  \n- Adopte un ton professionnel, bienveillant et rigoureux.  \n- En plus de l’analyse des données de terrain (tension du sol, pluie_24h prévue sous 24h, stade phénologique, enracinement), tu dois toujours intégrer les informations météorologiques fournies par l’outil \"HTTP_Request_Meteo\" :\n\nL’outil \"HTTP_Request_Meteo\" renvoie un JSON complexe, mais tu dois n’utiliser que :\n- current.temp_c (température en °C),\n- current.wind_kph (vent en km/h).\n- humidity (taux d'humidité en %)\n- cloud (couverture nuageuse en %)\n\nL’outil \"HTTP_Request_ETP\" renvoie un json décrivant l'ETP en mm pour chaque heure de la journée en cours (\"evapotranspiration\"), faire la somme pour déterminer l'ETP sur la journée.\n\nSauvegardes ton message de réponse dans L'outil  Simple Vector Store.\n\n- Active le node HTTP Request Discord qui envoi automatiquement un message d'alerte utilisateur\n\n\n#Important : Si le champ dendrometre a pour valeur stress_hydrique, déclencher impérativement le tool HTTP_Request_Stress.\n\nNe jamais inventer les valeurs météo, utilise uniquement celles fournies par l’outil.\n\n- Termine par une brève formule de courtoisie\n- Indique toujours la date du jour (date_releve) à la fin du message."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        -640
+      ],
+      "id": "fe3d92d3-ab54-4cc0-989e-c2d839ccdfd9",
+      "name": "Agent Mistral 2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "= Voici le message à traiter : {{ $('Agent Mistral 2').item.json.output }}\nLa date est le {{ $('Edit Fields').item.json.body.date_releve }}",
+        "options": {
+          "systemMessage": "Tu es un agent intelligent spécialisé en agronomie et gestion de l’irrigation. À chaque message reçu, ta tâche est la suivante :\n\n1. Lire et comprendre le contenu du message (données agronomiques, observations, relevés, etc.).\n2. Générer un résumé clair, concis et informatif du message. Ce résumé doit contenir les éléments clés utiles à la prise de décision (ex. : tension du sol, stade phénologique, état du dendromètre, etc.).\n3. Stocker ce résumé dans le calendrier à la **date indiquée dans le message** (champ `date_releve`).\n4. Donner un titre à l'évènement stocké dans le calendrier : Bilan agricole\n\nLe résumé doit être rédigé dans un style professionnel, compréhensible par un agriculteur ou un technicien. Il doit permettre de retrouver rapidement l’essentiel de la situation à cette date.\n\nExemple de résumé attendu :\n> *05/09/2025 – Tension à 45 cbar à 60 cm, sol limono-argileux grumeleux, stade montaison, croissance active selon le dendromètre. Pas d’irrigation immédiate recommandée.*\n\nNe réponds pas au message, ne donne pas de conseil. Ta seule tâche est de **résumer et enregistrer**.\n\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        -640
+      ],
+      "id": "3b6353bc-c78b-463e-9f8a-d35cb96cfe25",
+      "name": "Agent Mistral 3"
+    },
+    {
+      "parameters": {
+        "model": "pixtral-large-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        -416
+      ],
+      "id": "68252b9e-2c24-4f02-92e4-c325239246b8",
+      "name": "Mistral Large 3",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "a79SHEq8GQASp16V",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "mistral-large-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -416
+      ],
+      "id": "9ef51a29-9c56-4895-b2a2-3f331e655e74",
+      "name": "Mistral Large 2",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "a79SHEq8GQASp16V",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1C-u23C-0cbkBKW3Mz22L_sn51VkKX30fY43ChoHY-sY",
+          "mode": "list",
+          "cachedResultName": "fertilisation ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1C-u23C-0cbkBKW3Mz22L_sn51VkKX30fY43ChoHY-sY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feuille 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1C-u23C-0cbkBKW3Mz22L_sn51VkKX30fY43ChoHY-sY/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -832,
+        -432
+      ],
+      "id": "f73c1a91-7f75-4542-9caf-f64e2dcfb859",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "31LaukvmbfzpoFVr",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Agent Mistral 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP_Request_Meteo": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Mistral 2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agent Mistral 2",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP_Request_ETP": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Mistral 2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request Discord": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Mistral 2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Station Mesures": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP_Request_Stress": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Mistral 2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Agent Mistral 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agent Mistral 3",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "calendrier": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Mistral 3",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Agent Mistral 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory2": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agent Mistral 1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Mistral 1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Mistral 1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "analyses_sol": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Mistral 1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "configuration_parcelle": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Mistral 1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Large": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent Mistral 1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent Mistral 2": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Large 3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent Mistral 3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Large 2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent Mistral 2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Mistral 1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a6bc70d6-a3d8-4427-b771-3aae324f96f1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "779524e63dbde32a73cbf739cde16780b056dc31072ff92c4fdba4f2d62e9ee8"
+  },
+  "id": "bdzajI5U1ed1umsU",
+  "tags": []
+}

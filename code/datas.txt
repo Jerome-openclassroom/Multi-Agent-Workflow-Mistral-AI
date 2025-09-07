@@ -1,0 +1,11 @@
+{
+  "session_id": "user_jerome_001",
+  "tension_centibar": 45,
+  "structure_sol": "grumeleuse",
+  "texture_sol": "limono-argileuse",
+  "stade_phenologique": "montaison",
+  "profondeur_capteur_cm": 40,
+  "enracinement" : 50,
+  "date_releve": "2025-09-05T22:00:00+02:00",
+  "dendrometre": "stress_hydrique"
+}
