@@ -1,6 +1,6 @@
 # 🌱 Agent IA Agronomie – Workflow n8n (100% Mistral IA 🇫🇷)
 
-![Workflow](screenshots/workflow.png))
+![Workflow](screenshots/workflow.png)
 
 ## Présentation
 
