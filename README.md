@@ -67,7 +67,7 @@ Le workflow est construit dans **n8n** et relie plusieurs agents spécialisés p
 
 ```
 Agent_IA_Agronomie/                       
-├── README_fr.md                        # Présentation complète du projet (version française)  
+├── README.md                        # Présentation complète du projet (version française)  
 ├── README_en.md                        # Project overview in English (English version)  
 │
 ├── screenshots/                        # Captures et démonstrations visuelles  
