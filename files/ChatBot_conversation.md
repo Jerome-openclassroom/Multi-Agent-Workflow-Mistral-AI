@@ -1,6 +1,6 @@
 Bonjour Jérôme ! Comment puis-je t'aider aujourd'hui dans la gestion de tes parcelles agricoles ? 😊
 
-## tu peux croiser les données de la fertilisation la plus récente avec l'analyse de sol la plus récente pour me fournir une synthèse simple et compacte ?
+## - tu peux croiser les données de la fertilisation la plus récente avec l'analyse de sol la plus récente pour me fournir une synthèse simple et compacte ?
 
 Voici une synthèse compacte croisant la fertilisation la plus récente (du 10 juillet 2025) avec l'analyse de sol la plus récente (du 5 octobre 2025) :
 
@@ -38,7 +38,7 @@ Envisager un apport organique pour maintenir la matière organique.
 Vérifier les besoins spécifiques de la prochaine culture (ex. colza, blé) pour affiner les apports.
 Besoin de précisions ou d'une analyse plus ciblée sur une parcelle en particulier ? 😊
 
-## peux tu regarder la configuration actuelle des plantes sur la parcelle ?
+## - Peux tu regarder la configuration actuelle des plantes sur la parcelle ?
 
 Voici la configuration actuelle de la parcelle basée sur les dernières données :
 
@@ -70,7 +70,7 @@ Contrôler visuellement l'état des fleurs/fruits pour détecter d'éventuels si
 Planifier un nouveau relevé de tension et de dendromètre dans 5-7 jours pour suivre l'évolution.
 Tu veux que je déclenche une alerte ou un bilan détaillé pour cette parcelle ? Ou as-tu une question spécifique sur cette phase de floraison ? 😊
 
-## Tu peux déclencher un bilan détaillé via HTTP request ?
+## - Tu peux déclencher un bilan détaillé via HTTP request ?
 
 Le bilan détaillé a été déclenché avec succès ! Voici les données transmises pour analyse :
 
@@ -90,4 +90,5 @@ Recommander des ajustements (ex. irrigation, fertilisation foliaire).
 Prédire l'évolution du stade phénologique ou des besoins en eau.
 
 Je te tiendrai informé dès que le résultat du bilan sera disponible. En attendant, veux-tu que je vérifie un autre aspect (ex. historique des fertilisations, tendances météo) ? 😊
+
 
